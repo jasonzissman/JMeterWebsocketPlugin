@@ -1,11 +1,5 @@
 package com.jasonzissman.jmeter;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.ExecutionException;
-
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClient.BoundRequestBuilder;
 import com.ning.http.client.ListenableFuture;
@@ -13,8 +7,11 @@ import com.ning.http.client.websocket.WebSocket;
 import com.ning.http.client.websocket.WebSocketByteListener;
 import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 
+import com.jasonzissman.jmeter.WebSocketSessionResults;
+
 public class WebSocketSession {
 	
+	private int testUpdateIntervalMs = 100;
 	private WebSocket websocket = null;
 	private boolean isSessionDone = false;
 	
@@ -47,20 +44,23 @@ public class WebSocketSession {
 		
 		WebSocketUpgradeHandler upgradeHandler = builder.addWebSocketListener(webSocketListener).build();
 		ListenableFuture<WebSocket> webSocketFuture;
+		int accruedTimeMs = 0;
+
 		try {
 			results.addToLogOfActivities("Connecting to: '" + url +"'");
 			webSocketFuture = boundRequestBuilder.execute(upgradeHandler);
 			websocket = webSocketFuture.get();
 			// TODO - should synchronize class variables
-			// TODO - need to make the two timeout values less ambiguous
-			int accruedTimeMs = 0;
 			while(isSessionDone == false && accruedTimeMs < responseTimeout){
-				Thread.sleep(100);
-				accruedTimeMs += 100;
+				Thread.sleep(testUpdateIntervalMs);
+				accruedTimeMs += testUpdateIntervalMs;
 			}
-
+			results.setAccruedTestTime(accruedTimeMs);
+			results.addToLogOfActivities("Test duration: " + accruedTimeMs);
+			
 			if (results.didReceivedResponseToEndComm() == false){
-				results.setTimedOut(true);
+				results.setTimedOutWhileWaitingForResponse(true);
+				results.addToLogOfActivities("Never received response: '" + responseToEndComm + "'");
 			}
 			
 		} catch (Exception ex){
@@ -70,7 +70,6 @@ public class WebSocketSession {
 			closeConnection();
 		}
 		
-		
 		httpClient.close();
 	}
 	
@@ -78,7 +77,9 @@ public class WebSocketSession {
 		WebSocketByteListener webSocketByteListener = new WebSocketByteListener() {
 
 			public void onOpen(WebSocket websocket) {
-				results.addToLogOfActivities("Connection opened.  Sending message: '" + messageToSend + "'");
+				results.addToLogOfActivities("Connection opened.");
+				results.addToLogOfActivities("Connection will close on timeout (" + responseTimeout + "ms) or when the following is received: '" + responseToEndComm + "'");
+				results.addToLogOfActivities("Sending message: '" + messageToSend + "'");
 				websocket.sendMessage(messageToSend.getBytes());
 			}
 

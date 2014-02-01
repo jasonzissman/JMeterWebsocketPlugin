@@ -8,7 +8,8 @@ public class WebSocketSessionResults {
 	
 	private boolean successful = true;
 	private boolean receivedResponseToEndComm = false;
-	private boolean timedOut = false;
+	private boolean timedOutWhileWaitingForResponse = false;
+	private int accruedTime = 0;
 	private String logOfActivity = "";
 	
 	public boolean didReceivedResponseToEndComm() {
@@ -19,12 +20,12 @@ public class WebSocketSessionResults {
 		this.receivedResponseToEndComm = receivedResponseToEndComm;
 	}
 	
-	public boolean didTimeOut() {
-		return timedOut;
+	public boolean didTimeOutWhileWaitingForResponse() {
+		return timedOutWhileWaitingForResponse;
 	}
 	
-	public void setTimedOut(boolean timedOut) {
-		this.timedOut = timedOut;
+	public void setTimedOutWhileWaitingForResponse(boolean timedOut) {
+		this.timedOutWhileWaitingForResponse = timedOut;
 	}
 
 	public String getLogOfActivity() {
@@ -47,4 +48,14 @@ public class WebSocketSessionResults {
 	public boolean wasSuccessful(){
 		return this.successful;
 	}
+
+	public int getAccruedTestTime() {
+		return accruedTime;
+	}
+
+	public void setAccruedTestTime(int accruedTestTime) {
+		this.accruedTime = accruedTestTime;
+	}
+	
+	
 }
