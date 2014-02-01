@@ -1,8 +1,52 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.jasonzissman.jmeter</groupId>
-  <artifactId>JMeterWebsocketPlugin</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>JMeter Websocket Plugin</name>
-  <description>A plugin for JMeter that supports Web Sockets</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.jasonzissman.jmeter</groupId>
+	<artifactId>JMeterWebsocketPlugin</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>JMeter Websocket Plugin</name>
+	<description>A plugin for JMeter that supports Web Sockets</description>
+
+	<properties>
+		<jmeterVersion>2.9</jmeterVersion>
+		<jettyVersion>8.1.9.v20130131</jettyVersion>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jmeter</groupId>
+			<artifactId>ApacheJMeter</artifactId>
+			<version>${jmeterVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jmeter</groupId>
+			<artifactId>ApacheJMeter_http</artifactId>
+			<version>${jmeterVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jmeter</groupId>
+			<artifactId>ApacheJMeter_functions</artifactId>
+			<version>${jmeterVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.eclipse.jetty</groupId> -->
+		<!-- <artifactId>jetty-websocket</artifactId> -->
+		<!-- <version>${jettyVersion}</version> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.ning</groupId>
+			<artifactId>async-http-client</artifactId>
+			<version>1.8.1</version>
+		</dependency>
+	</dependencies>
+
 </project>
