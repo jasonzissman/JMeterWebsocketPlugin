@@ -11,6 +11,7 @@ public class WebSocketSessionResults {
 	private boolean timedOutWhileWaitingForResponse = false;
 	private int accruedTime = 0;
 	private String logOfActivity = "";
+	private String dataReceivedFromServer = "";
 	
 	public boolean didReceivedResponseToEndComm() {
 		return receivedResponseToEndComm;
@@ -55,6 +56,14 @@ public class WebSocketSessionResults {
 
 	public void setAccruedTestTime(int accruedTestTime) {
 		this.accruedTime = accruedTestTime;
+	}
+	
+	public String getDataReceivedFromServer(){
+		return dataReceivedFromServer;
+	}
+	
+	public void addToDataReceivedFromServer(String data){
+		dataReceivedFromServer += data;
 	}
 	
 	

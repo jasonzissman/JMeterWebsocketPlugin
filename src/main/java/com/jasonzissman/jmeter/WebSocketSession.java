@@ -58,7 +58,7 @@ public class WebSocketSession {
 			results.setAccruedTestTime(accruedTimeMs);
 			results.addToLogOfActivities("Test duration: " + accruedTimeMs);
 			
-			if (results.didReceivedResponseToEndComm() == false){
+			if (results.didReceivedResponseToEndComm() == false && results.wasSuccessful() == true){
 				results.setTimedOutWhileWaitingForResponse(true);
 				results.addToLogOfActivities("Never received response: '" + responseToEndComm + "'");
 			}
@@ -90,12 +90,14 @@ public class WebSocketSession {
 
 			public void onError(Throwable t) {
 				results.addToLogOfActivities("Error occurred: " + t.getLocalizedMessage());
+				results.setSuccessful(false);
 				t.printStackTrace();
 				closeConnection();
 			}
 
 			public void onMessage(byte[] message) {
 				String messageStr = new String(message);
+				results.addToDataReceivedFromServer(messageStr);
 				results.addToLogOfActivities("Message received: '" + messageStr + "'");
 				
 				if (messageStr.contains(responseToEndComm)){

@@ -30,6 +30,7 @@ public class WebSocketSessionTest {
 		assertTrue(logOfActivity.contains("Sending message: '" + messageToSend + "'"));
 		assertTrue(logOfActivity.contains("Message received: '" + messageToSend + "'"));
 		assertTrue(logOfActivity.contains("Test duration: "));
+		assertTrue(sessionResults.getDataReceivedFromServer().contains(responseToEndComm));
 	}
 	
 	@Test
