@@ -53,7 +53,28 @@ public class WebSocketSamplerGui extends AbstractSamplerGui {
         init();
     }
 
-    @Override
+    private void init() {
+    	
+    	setLayout(new BorderLayout(0, 5));
+    	if (displayName) {
+    		setBorder(makeBorder());
+    		add(makeTitlePanel(), BorderLayout.NORTH);
+    	}
+    	
+    	add(createMainPanel(), BorderLayout.CENTER);
+    	setDefaultValues();
+    }
+    
+    private void setDefaultValues() {
+		wsUrlField.setText("ws://echo.websocket.org");
+		wsDataToSendField.setText("Hello World!");
+		wsMessageToEndCommField.setText("Hello World!");
+		wsTimeoutField.setText("2000");
+		setName("Web Socket Sampler");
+		setComment("A test connection with an endpoint that supports Websocket upgrades");
+	}
+
+	@Override
 	public String getLabelResource() {
     	throw new IllegalStateException("This shouldn't be called");
 	}    
@@ -63,16 +84,6 @@ public class WebSocketSamplerGui extends AbstractSamplerGui {
 		return getResString("websocket_testing_title");
 	}
 
-	private void init() {
-		
-        setLayout(new BorderLayout(0, 5));
-        if (displayName) {
-            setBorder(makeBorder());
-            add(makeTitlePanel(), BorderLayout.NORTH);
-        }
-
-		add(createMainPanel(), BorderLayout.CENTER);
-	}
 
 	protected VerticalPanel createMainPanel() {
 		VerticalPanel mainPanel = new VerticalPanel();
