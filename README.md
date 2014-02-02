@@ -2,17 +2,15 @@ JMeterWebsocketPlugin
 =====================
 
 A WebSocket plugin for JMeter.
-
 =====================
 
 This plugin is intended to be used with JMeter to allow for communication with a web server via WebSockets.  The plugin handles the initial HTTP request as well as the upgrade to a WebSocket connection.  A detailed log of connection events is recorded, as is all data sent from the server.
 
-To install this plugin, simply take the output jar with dependencies (target/JMeterWebSocketPlugin-1.0.0-jar-with-dependencies.jar)and place it in the 'lib/ext/' folder of JMeter.
+To install this plugin, simply take the output jar with dependencies (target/JMeterWebSocketPlugin-1.0.0-jar-with-dependencies.jar) and place it in the 'lib/ext/' folder of JMeter.
 
 =====================
 
 How to use the JMeter WebSocket plugin
-
 =====================
 
 1. Install the plugin by placing the jar with depedencies in JMeter's 'lib/ext/' folder.
@@ -23,7 +21,6 @@ How to use the JMeter WebSocket plugin
 =====================
 
 What you can configure
-
 =====================
 
 In the WebSocket Sampler, you can modify four settings:
