@@ -1,6 +1,7 @@
 package com.jasonzissman.jmeter;
 
 import java.io.IOException;
+import java.util.Date;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClient.BoundRequestBuilder;
@@ -20,7 +21,6 @@ public class WebSocketSession {
 	private WebSocketSessionResults results = new WebSocketSessionResults();
 	
 	private String url = "ws://echo.websocket.org";
-	private int connTimeout = 5000;
 	private int responseTimeout = 5000;
 	private String messageToSend = "";
 	private String responseToEndComm = "[No response to terminate communication has been defined]";
@@ -30,9 +30,8 @@ public class WebSocketSession {
 		this.messageToSend = messageToSend;
 	}
 	
-	public WebSocketSession(String url, int connTimeout, int responseTimeout, String messageToSend, String responseToEndComm) {
+	public WebSocketSession(String url,int responseTimeout, String messageToSend, String responseToEndComm) {
 		this.url = url;
-		this.connTimeout = connTimeout;
 		this.responseTimeout = responseTimeout;
 		this.messageToSend = messageToSend;
 		this.responseToEndComm = responseToEndComm;
@@ -47,33 +46,30 @@ public class WebSocketSession {
 			ListenableFuture<WebSocket> webSocketFuture = createWebSocketFuture(httpClient);
 			websocket = webSocketFuture.get();
 
-			int accruedTimeMs = waitForSessionToFinish();
-			results.addToLogOfActivities("Test duration: " + accruedTimeMs + "ms");
+			waitForSessionToFinish();
 			
 			if (results.didReceivedResponseToEndComm() == false && results.wasSuccessful() == true){
 				results.setTimedOutWhileWaitingForResponse(true);
 				results.addToLogOfActivities("Never received response: '" + responseToEndComm + "'");
 			}
-			
 		} catch (Exception ex){
 			results.addToLogOfActivities("Error occurred: " + ex.getLocalizedMessage());
 			results.setSuccessful(false);
 			ex.printStackTrace();
-			closeConnection();
 		}
-		
+
+		closeConnection();
 		httpClient.close();
 	}
 
-	protected int waitForSessionToFinish() throws InterruptedException {
-		// TODO - should synchronize class variables
+	protected void waitForSessionToFinish() throws InterruptedException {
 		int accruedTimeMs = 0;
 		while(isSessionDone == false && accruedTimeMs < responseTimeout){
 			Thread.sleep(testUpdateIntervalMs);
 			accruedTimeMs += testUpdateIntervalMs;
 		}
 		results.setAccruedTestTime(accruedTimeMs);
-		return accruedTimeMs;
+		results.addToLogOfActivities("Test duration: " + accruedTimeMs + "ms");
 	}
 
 	protected ListenableFuture<WebSocket> createWebSocketFuture(AsyncHttpClient httpClient) throws IOException {
@@ -104,7 +100,11 @@ public class WebSocketSession {
 			}
 
 			public void onError(Throwable t) {
-				results.addToLogOfActivities("Error occurred: " + t.getLocalizedMessage());
+				if (t instanceof IllegalStateException){
+					results.addToLogOfActivities("Failed to connect to server: " + t.getLocalizedMessage());
+				} else {
+					results.addToLogOfActivities("Error occurred: " + t.getLocalizedMessage());
+				}
 				results.setSuccessful(false);
 				t.printStackTrace();
 				closeConnection();

@@ -12,11 +12,10 @@ public class WebSocketSessionTest {
 	public void testBasicEcho() {
 		String url = "ws://echo.websocket.org";
 		String messageToSend = "Please echo me back!";
-		int connTimeout = 1000;
 		int responseTimeout = 1000;
 		String responseToEndComm = messageToSend;
 		
-		WebSocketSession session = new WebSocketSession(url,connTimeout, responseTimeout, messageToSend, responseToEndComm);
+		WebSocketSession session = new WebSocketSession(url, responseTimeout, messageToSend, responseToEndComm);
 		session.executeSession();
 		
 		WebSocketSessionResults sessionResults = session.getSessionResults();
@@ -37,11 +36,10 @@ public class WebSocketSessionTest {
 	public void testBadUrl() {
 		String url = "ws://I_really_hope_this_sub_domain_doesnt_exist.websocket.org";
 		String messageToSend = "Please echo me back!";
-		int connTimeout = 1000;
 		int responseTimeout = 1000;
 		String responseToEndComm = messageToSend;
 		
-		WebSocketSession session = new WebSocketSession(url,connTimeout, responseTimeout, messageToSend, responseToEndComm);
+		WebSocketSession session = new WebSocketSession(url, responseTimeout, messageToSend, responseToEndComm);
 		session.executeSession();
 		
 		WebSocketSessionResults sessionResults = session.getSessionResults();
@@ -50,7 +48,7 @@ public class WebSocketSessionTest {
 		assertFalse(sessionResults.didTimeOutWhileWaitingForResponse());
 		assertFalse(sessionResults.didReceivedResponseToEndComm());
 		assertTrue(logOfActivity.contains("Connecting to: '" + url + "'"));
-		assertTrue(logOfActivity.contains("Error occurred"));
+		assertTrue(logOfActivity.contains("Failed to connect to server:"));
 		assertTrue(logOfActivity.contains("Test duration: "));
 	}
 

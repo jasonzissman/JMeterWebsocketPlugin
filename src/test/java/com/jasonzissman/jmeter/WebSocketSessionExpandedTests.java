@@ -10,11 +10,10 @@ public class WebSocketSessionExpandedTests {
 	public void testTimeoutDueToNeverReceivingExpectedResponse() {
 		String url = "ws://echo.websocket.org";
 		String messageToSend = "Please echo me back!";
-		int connTimeout = 1000;
 		int responseTimeout = 1000;
 		String responseToEndComm = "THIS_WILL_NEVER_BE_SENT_BY_WEB_SOCKET_SERVER";
 
-		WebSocketSession session = new WebSocketSession(url, connTimeout, responseTimeout, messageToSend,
+		WebSocketSession session = new WebSocketSession(url, responseTimeout, messageToSend,
 				responseToEndComm);
 		session.executeSession();
 
