@@ -1,5 +1,7 @@
 package com.jasonzissman.jmeter;
 
+import java.io.IOException;
+
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClient.BoundRequestBuilder;
 import com.ning.http.client.ListenableFuture;
@@ -11,7 +13,7 @@ import com.jasonzissman.jmeter.WebSocketSessionResults;
 
 public class WebSocketSession {
 	
-	private int testUpdateIntervalMs = 100;
+	private int testUpdateIntervalMs = 20;
 	private WebSocket websocket = null;
 	private boolean isSessionDone = false;
 	
@@ -37,26 +39,16 @@ public class WebSocketSession {
 	}
 	
 	public void executeSession() {
+
+		results.addToLogOfActivities("Connecting to: '" + url +"'");
 		AsyncHttpClient httpClient = new AsyncHttpClient();
-		WebSocketByteListener webSocketListener = getWebSocketListener();
-		WebSocketUpgradeHandler.Builder builder = new WebSocketUpgradeHandler.Builder();
-		BoundRequestBuilder boundRequestBuilder = httpClient.prepareGet(url);
-		
-		WebSocketUpgradeHandler upgradeHandler = builder.addWebSocketListener(webSocketListener).build();
-		ListenableFuture<WebSocket> webSocketFuture;
-		int accruedTimeMs = 0;
 
 		try {
-			results.addToLogOfActivities("Connecting to: '" + url +"'");
-			webSocketFuture = boundRequestBuilder.execute(upgradeHandler);
+			ListenableFuture<WebSocket> webSocketFuture = createWebSocketFuture(httpClient);
 			websocket = webSocketFuture.get();
-			// TODO - should synchronize class variables
-			while(isSessionDone == false && accruedTimeMs < responseTimeout){
-				Thread.sleep(testUpdateIntervalMs);
-				accruedTimeMs += testUpdateIntervalMs;
-			}
-			results.setAccruedTestTime(accruedTimeMs);
-			results.addToLogOfActivities("Test duration: " + accruedTimeMs);
+
+			int accruedTimeMs = waitForSessionToFinish();
+			results.addToLogOfActivities("Test duration: " + accruedTimeMs + "ms");
 			
 			if (results.didReceivedResponseToEndComm() == false && results.wasSuccessful() == true){
 				results.setTimedOutWhileWaitingForResponse(true);
@@ -72,8 +64,31 @@ public class WebSocketSession {
 		
 		httpClient.close();
 	}
+
+	protected int waitForSessionToFinish() throws InterruptedException {
+		// TODO - should synchronize class variables
+		int accruedTimeMs = 0;
+		while(isSessionDone == false && accruedTimeMs < responseTimeout){
+			Thread.sleep(testUpdateIntervalMs);
+			accruedTimeMs += testUpdateIntervalMs;
+		}
+		results.setAccruedTestTime(accruedTimeMs);
+		return accruedTimeMs;
+	}
+
+	protected ListenableFuture<WebSocket> createWebSocketFuture(AsyncHttpClient httpClient) throws IOException {
+		WebSocketByteListener webSocketListener = createWebSocketListener();
+		WebSocketUpgradeHandler.Builder builder = new WebSocketUpgradeHandler.Builder();
+		BoundRequestBuilder boundRequestBuilder = httpClient.prepareGet(url);
+		
+		WebSocketUpgradeHandler upgradeHandler = builder.addWebSocketListener(webSocketListener).build();
+		ListenableFuture<WebSocket> webSocketFuture;
+		
+		webSocketFuture = boundRequestBuilder.execute(upgradeHandler);
+		return webSocketFuture;
+	}
 	
-	public WebSocketByteListener getWebSocketListener(){
+	public WebSocketByteListener createWebSocketListener(){
 		WebSocketByteListener webSocketByteListener = new WebSocketByteListener() {
 
 			public void onOpen(WebSocket websocket) {

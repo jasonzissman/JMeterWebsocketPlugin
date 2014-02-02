@@ -70,8 +70,6 @@ public class WebSocketSamplerGui extends AbstractSamplerGui {
 		wsDataToSendField.setText("Hello World!");
 		wsMessageToEndCommField.setText("Hello World!");
 		wsTimeoutField.setText("2000");
-		setName("Web Socket Sampler");
-		setComment("A test connection with an endpoint that supports Websocket upgrades");
 	}
 
 	@Override
@@ -81,9 +79,8 @@ public class WebSocketSamplerGui extends AbstractSamplerGui {
     
 	@Override
 	public String getStaticLabel() {
-		return getResString("websocket_testing_title");
+		return getResString("websocket_sample_title");
 	}
-
 
 	protected VerticalPanel createMainPanel() {
 		VerticalPanel mainPanel = new VerticalPanel();

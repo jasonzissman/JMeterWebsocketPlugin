@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jasonzissman.jmeter</groupId>
 	<artifactId>JMeterWebsocketPlugin</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>JMeter Websocket Plugin</name>
 	<description>A plugin for JMeter that supports Web Sockets</description>
 
